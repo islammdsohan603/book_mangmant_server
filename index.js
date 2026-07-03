@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 
@@ -49,6 +49,24 @@ async function run() {
         res.status(500).send({ message: "Error fetching books", error: err });
       }
     });
+
+    // get single data api
+
+    app.get("/api/details/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await booksCollection.findOne(query);
+        if (!result) {
+          return res.status(404).send({ message: "Books not founds" })
+        }
+
+        res.send(result)
+
+      } catch (err) {
+        res.status(500).send({ message: "Error fetching books", error: err });
+      }
+    })
 
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
