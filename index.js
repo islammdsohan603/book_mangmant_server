@@ -44,12 +44,11 @@ async function run() {
     app.get("/api/all-books", async (req, res) => {
       try {
         const result = await booksCollection.find().toArray();
-        res.send(result)
+        res.send(result);
       } catch (err) {
-        console.error("Error fetching books", err);
         res.status(500).send({ message: "Error fetching books", error: err });
       }
-    })
+    });
 
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
