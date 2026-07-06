@@ -96,6 +96,16 @@ async function run() {
       }
     });
 
+    // read book get api
+
+    app.get("/api/get-read-book", async (req, res) => {
+      try {
+        const result = await readebooks.find().toArray()
+        res.status(201).send(result)
+      } catch (err) {
+        res.status(500).send({ message: "Error fetching books", error: err });
+      }
+    })
 
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
