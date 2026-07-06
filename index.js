@@ -24,6 +24,7 @@ async function run() {
     console.log("🎯 Successfully connected to MongoDB Atlas!");
 
     const booksCollection = client.db("bookmangment").collection("books");
+    const readebooks = client.db("bookmangment").collection("readebook")
 
     // API Routes
     app.get("/api/recent-books", async (req, res) => {
@@ -34,7 +35,7 @@ async function run() {
         res.status(500).send({ message: "Error fetching books", error: err });
       }
     });
-
+    // get all book api
     app.get("/api/all-books", async (req, res) => {
       try {
         const result = await booksCollection.find().toArray();
@@ -43,7 +44,7 @@ async function run() {
         res.status(500).send({ message: "Error fetching books", error: err });
       }
     });
-
+    // single data api
     app.get("/api/details/:id", async (req, res) => {
       try {
         const id = req.params.id;
@@ -57,6 +58,20 @@ async function run() {
         res.status(500).send({ message: "Error fetching books", error: err });
       }
     });
+
+    // read book now button api
+
+    app.post("/api/read-book", async (req, res) => {
+      try {
+        const book = req.body;
+
+        const result = await readebooks.insertOne(book)
+        res.status(201).send(result)
+
+      } catch (err) {
+        res.status(500).send({ message: "Error fetching books", error: err });
+      }
+    })
 
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
