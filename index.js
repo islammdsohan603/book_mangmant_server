@@ -65,13 +65,37 @@ async function run() {
       try {
         const book = req.body;
 
-        const result = await readebooks.insertOne(book)
-        res.status(201).send(result)
+
+        if (!book || !book._id) {
+          return res.status(400).send({ message: "Invalid book data provided" });
+        }
+
+
+        const isExist = await readebooks.findOne({ bookId: book._id });
+
+        if (isExist) {
+
+          return res.status(400).send({ message: "This book is already in your bookmarks!" });
+        }
+
+
+        const { _id, ...bookWithoutId } = book;
+        const bookToSave = {
+          ...bookWithoutId,
+          bookId: _id,
+          addedAt: new Date()
+        };
+
+
+        const result = await readebooks.insertOne(bookToSave);
+        res.status(201).send(result);
 
       } catch (err) {
-        res.status(500).send({ message: "Error fetching books", error: err });
+        console.error("Database Error:", err);
+        res.status(500).send({ message: "Server error while saving the book", error: err.message });
       }
-    })
+    });
+
 
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
